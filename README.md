@@ -12,5 +12,3 @@ Still From: Chungking Express, 1995 by Wong Kar-Wai
 
 ![Drive](drive.jpg)
 Still From: Drive, 2011 by Nicolas Winding Refn
-
-
