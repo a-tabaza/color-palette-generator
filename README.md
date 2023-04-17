@@ -4,5 +4,13 @@ The idea is to generate a color palette from any image using a clustering method
 
 ## Results
 
-![Demo](result2.png)
-![Demo](result.png)
+![Chungking Express](chungking_express.png)
+Still From: Chungking Express, 1994 by Wong Kar-Wai
+
+![Fallen Angels](fallen_angels.jpg)
+Still From: Chungking Express, 1995 by Wong Kar-Wai
+
+![Drive](drive.jpg)
+Still From: Drive, 2011 by Nicolas Winding Refn
+
+
