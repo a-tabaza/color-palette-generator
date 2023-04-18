@@ -20,7 +20,7 @@ Still from *Drive (2011)* by Nicolas Winding Refn
 
 ### Randomly Sampled Colors from Larger Number of Clusters
 
-Stills from *Parasite (2011)* by Nicolas Winding Refn
+Stills from *Parasite (2019)* by Bong Joon-ho
 
 - *k* = 36
 
