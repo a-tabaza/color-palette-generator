@@ -18,7 +18,7 @@ Still from *Fallen Angels* (1995) by Wong Kar-Wai
 ![Drive](drive.jpg)
 Still from *Drive (2011)* by Nicolas Winding Refn
 
-### K-Means Clustering (Ensemble of K-Means and MiniBatchKMeans)
+### Randomly Sampled Colors from Larger Number of Clusters
 
 Stills from *Parasite (2011)* by Nicolas Winding Refn
 
