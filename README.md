@@ -1,6 +1,6 @@
-# Color Palette Generator (Work in Progress)
+# Color Palette Generator 
 
-Trying out K-Means Clustering to generate color palettes from images. Logging my experiments. I'd like to deploy this as a web app once I'm happy with the results.
+[![Streamlit App](https://static.streamlit.io/badges/streamlit_badge_black_white.svg)](https://a-tabaza-color-palette-generator-app-erznb7.streamlit.app)
 
 ## Experimental Results
 
