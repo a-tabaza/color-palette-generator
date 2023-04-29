@@ -163,4 +163,4 @@ if uploaded_file is not None:
         st.image(pal_image, caption='Palette', use_column_width=True, width=64)
         # st.text(f'RGB Palette:\n{" ".join(rgb_palette)}')
         st.header(f'HEX Codes:')
-        st.subheader(f'{" , ".join(hex_palette)}')
+        st.subheader(f'{" \t ".join(hex_palette)}')
