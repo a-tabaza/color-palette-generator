@@ -1,10 +1,12 @@
 import numpy as np
 from sklearnex import patch_sklearn
 patch_sklearn()
-
+import io
+import base64
 import pandas as pd
 import streamlit as st
 from random import sample
+import json
 import requests
 from PIL import Image, ImageColor
 from sklearn.cluster import KMeans, MiniBatchKMeans
@@ -20,9 +22,12 @@ st.set_page_config(
 st.title('Color Palette Generator')
 st.header('Generates a color palette from an image using KMeans Clustering.')
 st.caption('By: [Abdulrahman Tabaza](https://github.com/a-tabaza)')
+
+
 caption = f'Afterthought: the range of colors is limited and sorted by dominance as opposed to prominence in image. Next on my list would be to try a generative adverserial network to generate a better palette.'
 st.caption(caption)
 
+@st.cache_data
 def image_loader(path):
     try:
         image = Image.open(path)
@@ -31,6 +36,7 @@ def image_loader(path):
         raise Exception('Image not found, try another path')
     return image, bands
 
+@st.cache_data
 def flatten_image(image):
     df = pd.DataFrame(list(image.getdata()),columns=list(image.getbands()))
     return df
@@ -42,34 +48,13 @@ if uploaded_file is not None:
     h, w = image.size
     image = image.resize((int(h/3),int(w/3)))
     data = flatten_image(image)
-    
-class Clusterer():
-    def __init__(self, df, colors=8,km=True,mbkm=False):
-        self.df = df
-        self.models = {}
-        self.km = km
-        self.mbkm = mbkm
 
-        if km:
-            self.models['KMeans'] = KMeans(n_clusters=colors,n_init='auto').fit(self.df)
-        if mbkm:
-            self.models['MiniBatchKMeans'] = MiniBatchKMeans(n_clusters=colors,n_init='auto').fit(self.df)
+@st.cache_data
+def Clusterer(df, colors=8):
+    df = df
+    km = KMeans(n_clusters=colors,n_init='auto').fit(df)
+    return km
 
-    def kmeans_model(self):
-        if self.km:
-            return self.models['KMeans']
-    
-    def minibatchkmeans_model(self):
-        if self.mbkm:
-            return self.models['MiniBatchKMeans']
-    
-    def kmeans_clusters(self):
-        if self.km:
-            return self.models['KMeans'].predict(self.df)
-    
-    def minibatchkmeans_clusters(self):
-        if self.mbkm:
-            return self.models['MiniBatchKMeans'].predict(self.df)
 
 def generate_rgb_palette(model,colors,norm=False):
     centers = model.cluster_centers_.astype(int)
@@ -102,12 +87,7 @@ def hex_to_rgb(hex_value):
     h = hex_value.lstrip('#')
     return tuple(int(h[i:i + 2], 16) / 255.0 for i in (0, 2, 4))
 
-def ensemble_palettes(models,colors):
-    rgb_palette = np.mean([generate_rgb_palette(model,colors) for model in models], axis=0).astype(int)
-    hex_palette = [rgb_to_hex(p) for p in rgb_palette]
-    rgb_palette = [tuple(p) for p in rgb_palette]
-    return rgb_palette, hex_palette
-
+@st.cache_data
 def visualize_palette_on_image(palette, image, colors, mode='RGB',reversed=False):
     if reversed:
         palette = palette[::-1]
@@ -137,6 +117,7 @@ def visualize_palette_on_image(palette, image, colors, mode='RGB',reversed=False
     
     return new_image
 
+@st.cache_data
 def visualize_palette(palette, colors, mode='RGB',reversed=False):
     if reversed:
         palette = palette[::-1]
@@ -163,21 +144,76 @@ def visualize_palette(palette, colors, mode='RGB',reversed=False):
 if uploaded_file is not None:
     N_COLORS = st.slider('Colors', 1, 16, 8)
     with st.spinner('Wait for it...'):
-        model = Clusterer(data,N_COLORS,km=True)
-        km = model.kmeans_model()
-        #mbkm = model.minibatchkmeans_model()
-        #models = [km,mbkm]
-        hex_palette = generate_hex_palette(km,N_COLORS)
-        # rgb_palette, hex_palette = ensemble_palettes(models,N_COLORS)
+        model = Clusterer(data,N_COLORS)
+        hex_palette = generate_hex_palette(model,N_COLORS)
         new_image = visualize_palette_on_image(hex_palette, image, colors=N_COLORS, mode='HEX')
         pal_image = visualize_palette(hex_palette, colors=N_COLORS, mode='HEX')
-    st.success('Done!')
+
     col1, col2 = st.columns(2)
+
     with col1:
+
         st.image(new_image, caption='Image', use_column_width=True)
         st.image(pal_image, caption='Palette', use_column_width=True)
-    with col2:
+    @st.cache_data
+    def generate_data(hex_palette):
+        names = []
+        for code in hex_palette:
+            response = requests.get(f'https://www.thecolorapi.com/id?hex={code[1:]}')
+            todos = json.loads(response.text)
+            names.append(todos['name']['value'])    
+        comb = zip(hex_palette,names)
+        df = pd.DataFrame({'HEX Code':hex_palette,'Color Name':names})
+        csv = df.to_csv().encode('utf-8')
+        my_json = df.to_json(orient="records")
+        df = df.set_index('HEX Code')
+        return df, csv, my_json
+
+    with st.spinner('Wait for it...'):
         
-        st.header(f'HEX Codes:')
-        st.subheader(f'{"  ".join(hex_palette)}')
+        df, csv, my_json = generate_data(hex_palette)
+        with col2:
+            st.caption('API Used for Color Names: [THECOLORAPI, Josh Beckman](https://www.thecolorapi.com)')
+            st.subheader('HEX Codes and Color Names:')
+            st.table(df)          
+
+    col3, col4, col5, col6 = st.columns(4)
+
+    with col3:
+        st.download_button(
+            label="Download HEX Codes and Color Names as CSV",
+            data=csv,
+            file_name='palette.csv',
+            mime='text/csv'
+        )
+    with col4:
+        st.download_button(
+            label="Download HEX Codes and Color Names as JSON",
+            data=my_json,
+            file_name='palette.json',
+        )
+    @st.cache_data
+    def save_image(image):
+        buf = io.BytesIO()
+        image.save(buf, format="JPEG")
+        byte = buf.getvalue()
+        return byte
+
+    new_byte = save_image(new_image)
+    pal_byte = save_image(pal_image)
+
+    with col5:
+        st.download_button(
+            label="Download Image with Palette as JPEG",
+            data=new_byte,
+            file_name="image_palette.jpeg",
+            mime="image/jpeg",
+        )
+    with col6:
+        st.download_button(
+            label="Download Palette as JPEG",
+            data=pal_byte,
+            file_name="palette.jpeg",
+            mime="image/jpeg",
+        )
     
