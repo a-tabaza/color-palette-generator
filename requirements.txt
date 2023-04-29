@@ -4,3 +4,4 @@ streamlit
 Pillow
 scikit-learn
 matplotlib
+scikit-learn-intelex

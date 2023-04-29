@@ -1,4 +1,7 @@
 import numpy as np
+from sklearnex import patch_sklearn
+patch_sklearn()
+
 import pandas as pd
 import streamlit as st
 from random import sample
@@ -6,6 +9,8 @@ import requests
 from PIL import Image, ImageColor
 from sklearn.cluster import KMeans, MiniBatchKMeans
 from matplotlib import pyplot as plt
+
+
 
 st.set_page_config(
     page_title="Color Palette Generator",
