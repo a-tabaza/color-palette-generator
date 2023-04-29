@@ -46,7 +46,12 @@ uploaded_file = st.file_uploader("Choose a file", type=['png', 'jpg', 'jpeg'])
 if uploaded_file is not None:
     image, bands = image_loader(uploaded_file)
     h, w = image.size
-    image = image.resize((int(h/3),int(w/3)))
+    if (h > 1024) or (w > 1024):
+        image = image.resize((int(h/2),int(w/2)))
+    if (h > 2048) or (w > 2048):
+        image = image.resize((int(h/3),int(w/3)))
+    if (h > 3096) or (w > 3096):
+        image = image.resize((int(h/4),int(w/4)))
     data = flatten_image(image)
 
 @st.cache_data
