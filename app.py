@@ -14,14 +14,14 @@ from matplotlib import pyplot as plt
 
 st.set_page_config(
     page_title="Color Palette Generator",
-    page_icon="🎨",
-    layout="wide",
+    page_icon="🎨"
 )
 
 st.title('Color Palette Generator')
 st.header('Generates a color palette from an image using KMeans Clustering.')
-st.subheader('The range of generated colors is not what I want and I would like to try deep GANs next.')
-
+st.caption('By: [Abdulrahman Tabaza](https://github.com/a-tabaza)')
+caption = f'Afterthought: the range of colors is limited and sorted by dominance as opposed to prominence in image. Next on my list would be to try a generative adverserial network to generate a better palette.'
+st.caption(caption)
 
 def image_loader(path):
     try:
@@ -162,19 +162,22 @@ def visualize_palette(palette, colors, mode='RGB',reversed=False):
 
 if uploaded_file is not None:
     N_COLORS = st.slider('Colors', 1, 16, 8)
-    model = Clusterer(data,N_COLORS,km=True)
-    km = model.kmeans_model()
-    #mbkm = model.minibatchkmeans_model()
-    #models = [km,mbkm]
-    hex_palette = generate_hex_palette(km,N_COLORS)
-    # rgb_palette, hex_palette = ensemble_palettes(models,N_COLORS)
-    new_image = visualize_palette_on_image(hex_palette, image, colors=N_COLORS, mode='HEX')
-    pal_image = visualize_palette(hex_palette, colors=N_COLORS, mode='HEX')
+    with st.spinner('Wait for it...'):
+        model = Clusterer(data,N_COLORS,km=True)
+        km = model.kmeans_model()
+        #mbkm = model.minibatchkmeans_model()
+        #models = [km,mbkm]
+        hex_palette = generate_hex_palette(km,N_COLORS)
+        # rgb_palette, hex_palette = ensemble_palettes(models,N_COLORS)
+        new_image = visualize_palette_on_image(hex_palette, image, colors=N_COLORS, mode='HEX')
+        pal_image = visualize_palette(hex_palette, colors=N_COLORS, mode='HEX')
+    st.success('Done!')
     col1, col2 = st.columns(2)
     with col1:
-        st.image(new_image, caption='Uploaded Image', use_column_width=True)
+        st.image(new_image, caption='Image', use_column_width=True)
+        st.image(pal_image, caption='Palette', use_column_width=True)
     with col2:
-        st.image(pal_image, caption='Palette', use_column_width=True, width=64)
-        # st.text(f'RGB Palette:\n{" ".join(rgb_palette)}')
+        
         st.header(f'HEX Codes:')
         st.subheader(f'{"  ".join(hex_palette)}')
+    
