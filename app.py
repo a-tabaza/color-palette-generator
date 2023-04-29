@@ -23,9 +23,9 @@ st.title('Color Palette Generator')
 st.header('Generates a color palette from an image using KMeans Clustering.')
 st.caption('By: [Abdulrahman Tabaza](https://github.com/a-tabaza)')
 
-
 caption = f'Afterthought: the range of colors is limited and sorted by dominance as opposed to prominence in image. Next on my list would be to try a generative adverserial network to generate a better palette.'
 st.caption(caption)
+st.caption('If you are interested in the experimental results while I was developing, [read here](https://github.com/a-tabaza/color-palette-generator/blob/main/README.md)')
 
 @st.cache_data
 def image_loader(path):
