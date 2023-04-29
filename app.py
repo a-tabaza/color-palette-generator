@@ -168,10 +168,11 @@ if uploaded_file is not None:
     #models = [km,mbkm]
     hex_palette = generate_hex_palette(km,N_COLORS)
     # rgb_palette, hex_palette = ensemble_palettes(models,N_COLORS)
+    new_image = visualize_palette_on_image(hex_palette, image, colors=N_COLORS, mode='HEX')
     pal_image = visualize_palette(hex_palette, colors=N_COLORS, mode='HEX')
     col1, col2 = st.columns(2)
     with col1:
-        st.image(image, caption='Uploaded Image', use_column_width=True)
+        st.image(new_image, caption='Uploaded Image', use_column_width=True)
     with col2:
         st.image(pal_image, caption='Palette', use_column_width=True, width=64)
         # st.text(f'RGB Palette:\n{" ".join(rgb_palette)}')
