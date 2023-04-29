@@ -44,23 +44,32 @@ if uploaded_file is not None:
     data = flatten_image(image)
     
 class Clusterer():
-    def __init__(self, df, colors=8):
+    def __init__(self, df, colors=8,km=True,mbkm=False):
         self.df = df
         self.models = {}
-        self.models['KMeans'] = KMeans(n_clusters=colors,n_init='auto').fit(self.df)
-        self.models['MiniBatchKMeans'] = MiniBatchKMeans(n_clusters=colors,n_init='auto').fit(self.df)
+        self.km = km
+        self.mbkm = mbkm
+
+        if km:
+            self.models['KMeans'] = KMeans(n_clusters=colors,n_init='auto').fit(self.df)
+        if mbkm:
+            self.models['MiniBatchKMeans'] = MiniBatchKMeans(n_clusters=colors,n_init='auto').fit(self.df)
 
     def kmeans_model(self):
-        return self.models['KMeans']
+        if self.km:
+            return self.models['KMeans']
     
     def minibatchkmeans_model(self):
-        return self.models['MiniBatchKMeans']
+        if self.mbkm:
+            return self.models['MiniBatchKMeans']
     
     def kmeans_clusters(self):
-        return self.models['KMeans'].predict(self.df)
+        if self.km:
+            return self.models['KMeans'].predict(self.df)
     
     def minibatchkmeans_clusters(self):
-        return self.models['MiniBatchKMeans'].predict(self.df)
+        if self.mbkm:
+            return self.models['MiniBatchKMeans'].predict(self.df)
 
 def generate_rgb_palette(model,colors,norm=False):
     centers = model.cluster_centers_.astype(int)
@@ -153,13 +162,12 @@ def visualize_palette(palette, colors, mode='RGB',reversed=False):
 
 if uploaded_file is not None:
     N_COLORS = st.slider('Colors', 1, 16, 8)
-    model = Clusterer(data,N_COLORS)
+    model = Clusterer(data,N_COLORS,km=True)
     km = model.kmeans_model()
-    mbkm = model.minibatchkmeans_model()
-    models = [km,mbkm]
-    kmc = model.kmeans_clusters()
-    mbkmc = model.minibatchkmeans_clusters()
-    rgb_palette, hex_palette = ensemble_palettes(models,N_COLORS)
+    #mbkm = model.minibatchkmeans_model()
+    #models = [km,mbkm]
+    hex_palette = generate_hex_palette(km,N_COLORS)
+    # rgb_palette, hex_palette = ensemble_palettes(models,N_COLORS)
     pal_image = visualize_palette(hex_palette, colors=N_COLORS, mode='HEX')
     col1, col2 = st.columns(2)
     with col1:
