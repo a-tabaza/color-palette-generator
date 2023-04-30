@@ -34,7 +34,7 @@ def image_loader(path):
     return image, bands
 
 @st.cache_data
-def flatten_image(image):
+def flatten_image(_image):
     df = pd.DataFrame(list(image.getdata()),columns=list(image.getbands()))
     return df
 
