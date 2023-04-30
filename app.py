@@ -33,7 +33,7 @@ def image_loader(path):
         raise Exception('Image not found, try another path')
     return image, bands
 
-@st.cache_data
+#@st.cache_data
 def flatten_image(image):
     df = pd.DataFrame(list(image.getdata()),columns=list(image.getbands()))
     return df
