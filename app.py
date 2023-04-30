@@ -9,7 +9,7 @@ from random import sample
 import json
 import requests
 from PIL import Image, ImageColor
-from sklearn.cluster import KMeans, MiniBatchKMeans
+from sklearn.cluster import KMeans
 from matplotlib import pyplot as plt
 
 
