@@ -9,6 +9,9 @@ A deep Generative Adverserial Network is on my list of things to try next.
 [![Streamlit App](https://static.streamlit.io/badges/streamlit_badge_black_white.svg)](https://a-tabaza-color-palette-generator-app-erznb7.streamlit.app)
 
 The app is deployed on Streamlit. You can try it [here.](https://a-tabaza-color-palette-generator-app-erznb7.streamlit.app)
+
+NOTE: for some reason, the caching system for streamlit causes the app to crash with certain images, I've pinpointed the error to unhashable dataframes and will fix soon.
+
 ![GUI](demo_images/GUI.png)
 
  I used [Intel® Extension for Scikit-learn](https://intel.github.io/scikit-learn-intelex/) to optimize my app since it trains a model for each picture the user uploads, I'm satisfied with the results, the app is fast and responsive.
