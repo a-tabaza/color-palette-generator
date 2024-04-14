@@ -6,9 +6,9 @@ A deep Generative Adverserial Network is on my list of things to try next.
 
 ## Web App
 
-[![Streamlit App](https://static.streamlit.io/badges/streamlit_badge_black_white.svg)](https://a-tabaza-color-palette-generator-app-erznb7.streamlit.app)
+[![Streamlit App](https://static.streamlit.io/badges/streamlit_badge_black_white.svg)](https://colorpalettegenerator.streamlit.app/)
 
-The app is deployed on Streamlit. You can try it [here.](https://a-tabaza-color-palette-generator-app-erznb7.streamlit.app)
+The app is deployed on Streamlit. You can try it [here.](https://colorpalettegenerator.streamlit.app/)
 
 NOTE: for some reason, the caching system for streamlit causes the app to crash with certain images, I've pinpointed the error to unhashable dataframes and will fix soon.
 
